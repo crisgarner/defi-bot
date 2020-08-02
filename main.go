@@ -73,7 +73,7 @@ func main() {
 		cancel: cancel,
 	}
 
-	// Go gas bot habdler
+	// Go gas bot handler
 	dg.AddHandler(handler.gasHandler)
 
 	// Wait here until SIGTERM or another interruption signal is received.
