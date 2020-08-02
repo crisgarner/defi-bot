@@ -20,6 +20,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8e274ff6-d8a9-4705-821b-4a92fe28f36d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,6 +47,11 @@
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.tried.to.enable.integration.vgo.integrator" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration default="true" type="GoAppEngineRunConfiguration" factoryName="Go App Engine">
@@ -134,6 +141,10 @@
       <screen x="0" y="27" width="1920" height="970" />
     </state>
     <state x="418" y="170" width="1107" height="684" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.970@0.27.1920.970" timestamp="1596392639493" />
+    <state x="567" y="304" width="776" height="423" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1596402761241">
+      <screen x="0" y="27" width="1920" height="970" />
+    </state>
+    <state x="567" y="304" width="776" height="423" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.970@0.27.1920.970" timestamp="1596402761241" />
     <state width="1874" height="238" key="GridCell.Tab.0.bottom" timestamp="1596401684248">
       <screen x="0" y="27" width="1920" height="970" />
     </state>

@@ -46,9 +46,6 @@ func init() {
 }
 
 func main() {
-
-
-
 	token := getEnv("DISCORD_TOKEN")
 	if token == "" {
 		log.Fatalf("Expected DISCORD_TOKEN env var, provided none")
@@ -65,7 +62,7 @@ func main() {
 		log.Fatalf("Error opening connection: %v", err)
 	}
 
-	// We initialize a new context with a cancelation function, useful
+	// We initialize a new context with a cancellation function, useful
 	// for cleanup of every possible goroutine on SIGTERM.
 	ctx, cancel := context.WithCancel(context.Background())
 	handler := &messageHandler{
@@ -92,7 +89,7 @@ func main() {
 }
 
 // This function will be called (due to AddHandler above) every time a new
-// message is created on any channel that the autenticated bot has access to.
+// message is created on any channel that the authenticated bot has access to.
 func (mh *messageHandler) gasHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages created by the bot itself.
 	if m.Author.ID == s.State.User.ID {
