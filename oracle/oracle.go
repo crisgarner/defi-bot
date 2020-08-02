@@ -9,10 +9,9 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	//"math/big"
 )
 
-type Client interface {
+type Oracle interface {
 	Config() *Config
 }
 
@@ -61,8 +60,8 @@ func (bkr *Broker) Client() *ethclient.Client {
 	return bkr.client
 }
 
-func (bkr *Broker) getGas(user common.Address) (*big.Int, error) {
-	gas, err := bkr.contract.GetLatestAnswer(nil)
+func (bkr *Broker) GetGas() (*big.Int, error) {
+	gas, err := bkr.contract.LatestAnswer(nil)
 	if err != nil {
 		return nil, err
 	}
