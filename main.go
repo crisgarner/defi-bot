@@ -162,8 +162,8 @@ func (mh *messageHandler) messageHandler(s *discordgo.Session, m *discordgo.Mess
 		toGwei(result)
 		res = fmt.Sprintf("%s %s Price is %d %s", emoji, coin, result, currency)
 	} else {
-		x := float64(toUSD(result).Int64()) / 100
-		res = fmt.Sprintf("%s %s Price is %s%.2f", emoji, coin, currency, x)
+		usd := toUSD(result)
+		res = fmt.Sprintf("%s %s Price is %s%.2f", emoji, coin, currency, usd)
 	}
 
 	//Gas from GETH
@@ -182,6 +182,8 @@ func toGwei(val *big.Int) *big.Int {
 	return val.Div(val, big.NewInt(1000000000))
 }
 
-func toUSD(val *big.Int) *big.Int {
-	return val.Div(val, big.NewInt(1000000))
+func toUSD(val *big.Int) float64 {
+	val.Div(val, big.NewInt(1000000))
+	x := float64((val).Int64()) / 100
+	return x
 }
