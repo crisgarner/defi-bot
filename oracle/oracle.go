@@ -60,10 +60,10 @@ func (bkr *Broker) Client() *ethclient.Client {
 	return bkr.client
 }
 
-func (bkr *Broker) GetGas() (*big.Int, error) {
-	gas, err := bkr.contract.LatestAnswer(nil)
+func (bkr *Broker) GetFeed() (*big.Int, error) {
+	response, err := bkr.contract.LatestAnswer(nil)
 	if err != nil {
 		return nil, err
 	}
-	return gas, err
+	return response, err
 }

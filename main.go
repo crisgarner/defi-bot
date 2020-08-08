@@ -24,6 +24,7 @@ func getEnv(key string) string {
 	}
 	return os.Getenv(key)
 }
+
 var (
 	log = logrus.WithField("prefix", "main")
 )
@@ -71,7 +72,7 @@ func main() {
 	}
 
 	// Go gas bot handler
-	dg.AddHandler(handler.gasHandler)
+	dg.AddHandler(handler.messageHandler)
 
 	// Wait here until SIGTERM or another interruption signal is received.
 	log.Println("Bot is now running, press ctrl-c to exit")
@@ -90,42 +91,97 @@ func main() {
 
 // This function will be called (due to AddHandler above) every time a new
 // message is created on any channel that the authenticated bot has access to.
-func (mh *messageHandler) gasHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (mh *messageHandler) messageHandler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	// Ignore all messages created by the bot itself.
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	commandPrefix := "!gas"
-	if !strings.Contains(m.Content, commandPrefix) {
+	var oracleAddress string
+	var coin string
+	var emoji string
+	var currency string
+	contains := false
+	if strings.Contains(strings.ToLower(m.Content), "!gas") {
+		contains = true
+		oracleAddress = getEnv("GAS_ORACLE_ADDRESS")
+		currency = "Gwei"
+		emoji = "⛽️"
+		coin = "Gas"
+	}
+	if strings.Contains(strings.ToLower(m.Content), "!price") {
+		contains = true
+		currency = "$"
+
+		if strings.Contains(strings.ToLower(m.Content), "eth") {
+			emoji = "🚀"
+			coin = "ETH"
+			oracleAddress = getEnv("ETH_ORACLE_ADDRESS")
+		}
+		if strings.Contains(strings.ToLower(m.Content), "dai") {
+			emoji = "💰️"
+			coin = "DAI"
+			oracleAddress = getEnv("DAI_ORACLE_ADDRESS")
+		}
+		if strings.Contains(strings.ToLower(m.Content), "btc") {
+			emoji = "👑️"
+			coin = "BTC"
+			oracleAddress = getEnv("BTC_ORACLE_ADDRESS")
+		}
+		if strings.Contains(strings.ToLower(m.Content), "link") {
+			emoji = "🐸"
+			coin = "LINK"
+			oracleAddress = getEnv("LINK_ORACLE_ADDRESS")
+		}
+	}
+	if !contains {
 		return
 	}
 
 	client, err := oracle.New(context.Background(), &oracle.Config{
 		URL:     getEnv("CLIENT_URL"),
-		Address: common.HexToAddress(getEnv("ORACLE_ADDRESS")),
+		Address: common.HexToAddress(oracleAddress),
 	})
 
 	if err != nil {
 		log.Fatalf("Could not initialize client: %v", err)
 	}
 	//Gas from Chainlink
-	gas, err := client.GetGas()
+	result, err := client.GetFeed()
+
 	if err != nil {
+		res := "Invalid Command: send \"!gas\" or \"!price $COIN\". Currently supported btc, eth, dai, link"
+		if _, err := s.ChannelMessageSend(m.ChannelID, res); err != nil {
+			log.Errorf("Could not send message over channel: %v", err)
+		}
 		log.Errorf("Could not reach Chainlink Oracle: %v", err)
 		return
 	}
-	toGwei(gas)
+
+	var res string
+	if strings.Contains(strings.ToLower(m.Content), "!gas") {
+		toGwei(result)
+		res = fmt.Sprintf("%s %s Price is %d %s", emoji, coin, result, currency)
+	} else {
+		x := float64(toUSD(result).Int64()) / 100
+		res = fmt.Sprintf("%s %s Price is %s%.2f", emoji, coin, currency, x)
+	}
+
 	//Gas from GETH
 	//gasPrice, err := client.Client().SuggestGasPrice(context.Background())
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
-	res := fmt.Sprintf("⛽️ Gas Price is %d Gwei", gas)
+
 	if _, err := s.ChannelMessageSend(m.ChannelID, res); err != nil {
 		log.Errorf("Could not send message over channel: %v", err)
 	}
+
 }
 
-func toGwei(val *big.Int) *big.Int{
-	return val.Div(val , big.NewInt(1000000000))
+func toGwei(val *big.Int) *big.Int {
+	return val.Div(val, big.NewInt(1000000000))
+}
+
+func toUSD(val *big.Int) *big.Int {
+	return val.Div(val, big.NewInt(1000000))
 }
